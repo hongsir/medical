@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration	
+PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"	
+"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 引用配置文件 -->
+	<properties resource="generator.properties" />
+	<classPathEntry location="${classpath}" /> 
+
+	<context id="platform" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+		<!--去除注释 （true好像不起作用） -->
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+			<property name="suppressDate" value="true" />
+		</commentGenerator>
+
+		<!--数据库连接 -->
+		<jdbcConnection driverClass="${driver}" connectionURL="${url}"
+			userId="${user}" password="${password}">
+		</jdbcConnection>
+
+		<!-- 这个元素的配置用来指定JDBC类型和Java类型如何转换。 -->
+		<!--  默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer  true，把JDBC DECIMAL 和 NUMERIC 类型解析为java.math.BigDecimal  --> 
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="true" />
+		</javaTypeResolver>
+
+		<!-- 该元素用来控制生成的实体类 -->
+		<javaModelGenerator targetPackage="${package.entity}" targetProject="${project}">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="false" />
+			<property name="rootClass" value="org.core.entity.BaseEntity" />
+		</javaModelGenerator>
+
+		<!--生成SQLMAP文件 -->
+		<sqlMapGenerator targetPackage="${package.mapper}" targetProject="${project}">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<!--生成Dao文件 可以配置 type="XMLMAPPER"生成xml的dao实现context id="DB2Tables" 修改targetRuntime="MyBatis3" -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="${package.mapper}" targetProject="${project}">
+			<property name="enableSubPackages" value="true" />
+			<property name="rootInterface" value="org.core.mapper.IBaseMapper" />
+			<property name="methodNameCalculator" value="extended" />
+		</javaClientGenerator>
+
+		<!--对应数据库表 mysql可以加入主键自增 字段命名 忽略某字段等 -->
+		<table tableName="base_user"/>
+		<table tableName="base_user_detail"/>
+	</context>
+</generatorConfiguration>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.system.mapper.platform.user.BaseUserMapper">
+	<!-- 查询BaseUser详情 -->
+	<select id="getOne" parameterType="org.system.entity.platform.user.BaseUser" resultType="map">
+		SELECT bu.id, bu.`name`, bu.phone, bu.birthday, bu.sex FROM base_user bu
+		<where>
+			<if test="phone !=null and phone != ''">
+				and bu.phone = #{phone}
+			</if>
+			<if test="idCard != null and idCard != ''">
+				and bu.id_card = #{idCard}
+			</if>
+			<if test="isUsed != null">
+				and bu.is_used=#{isUsed}
+			</if>
+			<if test="id != null">
+				and bu.id=#{id}
+			</if>
+		</where>
+	</select>
+	<!-- 判断BaseUser数据是否重复 -->
+	<select id="getRepeat" parameterType="org.system.entity.platform.user.BaseUser" resultType="map">
+		SELECT bu.id, bu.`name`, bu.phone, bu.birthday, bu.sex FROM base_user bu
+		<where>
+			<if test="phone !=null and phone != ''">
+				and bu.phone = #{phone}
+			</if>
+			<if test="idCard != null and idCard != ''">
+				and bu.id_card = #{idCard}
+			</if>
+			<if test="isUsed != null">
+				and bu.is_used=#{isUsed}
+			</if>
+			<if test="id != null">
+				and bu.id=#{id}
+			</if>
+		</where>
+	</select>
+
+	<!-- 新增BaseUser数据 -->
+	<insert id="insert" parameterType="org.system.entity.platform.user.BaseUser" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO `base_user` ( `base_module_id`,`register_date`, `name`, `sex`, `id_card`, `birthday`, `phone`, `is_used`,`home_address`, `remark`, `update_time`)
+		VALUES
+		(#{baseModuleId}, #{registerDate}, #{name}, #{sex}, #{idCard}, #{birthday}, #{phone}, #{isUsed},#{homeAddress},#{remark}, #{updateTime})
+	</insert>
+
+	<!-- 更新BaseUser数据 -->
+	<update id="update" parameterType="org.system.entity.platform.user.BaseUser">
+		UPDATE base_user bu
+		<set>
+			<if test="id !=null">
+				bu.id=#{id},
+			</if>
+			<if test="name !=null and name != ''">
+				bu.name=#{name},
+			</if>
+			<if test="sex !=null ">
+				bu.sex=#{sex},
+			</if>
+			<if test="idCard !=null and idCard != ''">
+				bu.id_card=#{idCard},
+			</if>
+			<if test="birthday !=null ">
+				bu.birthday=#{birthday},
+			</if>
+			<if test="phone !=null and phone != ''">
+				bu.phone=#{phone},
+			</if>
+			<if test="homeAddress !=null and homeAddress != ''">
+				bu.home_address=#{homeAddress},
+			</if>
+			<if test="isUsed !=null">
+				bu.is_used=#{isUsed},
+			</if>
+			<if test="updateTime !=null">
+				bu.update_time=#{updateTime},
+			</if>
+			<if test="remark !=null and remark != ''">
+				bu.remark=#{remark},
+			</if>
+		</set>
+		WHERE bu.id=#{id}
+	</update>
+</mapper>

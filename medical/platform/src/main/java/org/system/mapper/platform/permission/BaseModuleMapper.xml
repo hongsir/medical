@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.system.mapper.platform.permission.BaseModuleMapper">
+	<!-- 查询客户端信息 -->
+	<select id="getOne" parameterType="org.system.entity.platform.permission.BaseModule" resultType="map">
+		SELECT
+		bm.id,
+		bm.`name`,
+		bm.app_key appKey,
+		bm.app_secret appSecret,
+		bm.private_key privateKey
+		FROM
+		base_module bm
+		<where>
+			<if test="appKey != null and appKey != ''">
+				bm.app_key=#{appKey}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询客户端角色集合 -->
+	<select id="getRoleList" parameterType="org.system.entity.platform.permission.BaseModule" resultType="map">
+		SELECT
+		br.`code`
+		FROM
+		base_module_role bmr
+		LEFT JOIN base_module bm ON bm.id = bmr.base_module_id
+		LEFT JOIN base_role br ON br.id = bmr.base_role_id
+		<where>
+			<if test="appKey != null and appKey != ''">
+				bm.app_key=#{appKey}
+			</if>
+			<if test="id != null">
+				and bm.id=#{id}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询客户端权限集合 -->
+	<select id="getPermissionList" parameterType="org.system.entity.platform.permission.BaseModule" resultType="map">
+		SELECT
+		bp.`code`
+		FROM
+		base_module_role bmr
+		LEFT JOIN base_role br ON br.id = bmr.base_role_id
+		LEFT JOIN base_permission_base_role bpbr on bpbr.base_role_id=br.id
+		LEFT JOIN base_permission bp on bp.id=bpbr.base_permission_id
+		LEFT JOIN base_module bm on bm.id=bmr.base_module_id
+		<where>
+			<if test="appKey != null and appKey != ''">
+				bm.app_key=#{appKey}
+			</if>
+			<if test="id != null">
+				and bm.id=#{id}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询客户端操作集合 -->
+	<select id="getOperationList" parameterType="org.system.entity.platform.permission.BaseModule" resultType="map">
+		SELECT
+		bo.`code`
+		FROM
+		base_module_role bmr
+		LEFT JOIN base_role br ON br.id = bmr.base_role_id
+		LEFT JOIN base_permission_base_role bpbr on bpbr.base_role_id=br.id
+		LEFT JOIN base_permission bp on bp.id=bpbr.base_permission_id
+		LEFT JOIN base_permission_base_operation bpbo on bpbo.base_permission_id=bp.id
+		LEFT JOIN base_operation bo on bo.id=bpbo.base_operation_id
+		LEFT JOIN base_module bm on bm.id=bmr.base_module_id
+		<where>
+			<if test="appKey != null and appKey != ''">
+				bm.app_key=#{appKey}
+			</if>
+			<if test="id != null">
+				and bm.id=#{id}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.system.mapper.platform.user.BaseUserDetailMapper">
+	<!-- 新增BaseUserDetail数据 -->
+	<insert id="insert" parameterType="org.system.entity.platform.user.BaseUserDetail">
+		INSERT INTO `base_user_detail` (`user_id`, `residence_address`, `nation`, `degree`, `occupation`, `islocal`, `marriage_type`, `contact`, `photo`, `update_time`,`create_time`)
+		VALUES
+		(#{userId}, #{residenceAddress}, #{nation}, #{degree}, #{occupation}, #{islocal}, #{marriageType}, #{contact}, #{photo}, #{updateTime},#{createTime})
+	</insert>
+
+	<!-- 更新BaseUserDetail数据 -->
+	<update id="update" parameterType="org.system.entity.platform.user.BaseUserDetail">
+		UPDATE base_user_detail bud
+		<set>
+			<if test="residenceAddress !=null and residenceAddress !=''">
+				bud.residence_address=#{residenceAddress},
+			</if>
+			<if test="nation !=null and nation !=''">
+				bud.nation=#{nation},
+			</if>
+			<if test="degree !=null and degree !=''">
+				bud.degree=#{degree},
+			</if>
+			<if test="occupation !=null and occupation !=''">
+				bud.occupation=#{occupation},
+			</if>
+			<if test="islocal !=null">
+				bud.islocal=#{islocal},
+			</if>
+			<if test="marriageType !=null">
+				bud.marriage_type=#{marriageType},
+			</if>
+			<if test="contact !=null and contact !=''">
+				bud.contact=#{contact},
+			</if>
+			<if test="photo !=null and photo !=''">
+				bud.photo=#{photo},
+			</if>
+			<if test="updateTime !=null">
+				bud.update_time=#{updateTime},
+			</if>
+		</set>
+		WHERE bud.user_id=#{userId}
+	</update>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 扫描要自动管理的包 -->
+	<context:component-scan base-package="org.system.controller.*.impl" />
+
+	<!-- 支持上传文件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 文件大小设置 最大50M -->
+		<property name="maxUploadSize" value="52428800" />
+		<!-- 文件默认编码 -->
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀 系统内没有涉及到页面跳转所以基本无用 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".html" />
+	</bean>
+
+	<!-- 实体类校验拦截器 -->
+	<bean id="validInterceptor" class="org.system.intercept.ValidInterceptor" />
+
+	<!-- 配置AOP切点 只拦截Controltroller -->
+	<aop:config>
+		<!--切入点 -->
+		<aop:pointcut id="validPoint" expression="execution(public * org.system.controller.*.impl..*.*(..))" />
+		<!--在该切入点使用自定义拦截器 -->
+		<aop:advisor pointcut-ref="validPoint" advice-ref="validInterceptor" />
+	</aop:config>
+
+	<!-- 全局日期格式转换 输入参数 -->
+	<!-- <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean"> <property name="formatters"> <set> <bean class="org.service.utils.formatter.DateFormatter" /> </set> </property> </bean> -->
+
+	<!-- 指定自己定义的validator -->
+	<mvc:annotation-driven validator="validator">
+		<mvc:message-converters register-defaults="true">
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes" value="application/json;charset=UTF-8" />
+				<property name="features">
+					<array>
+						<value>WriteMapNullValue</value>
+						<value>WriteNullStringAsEmpty</value>
+						<value>WriteDateUseDateFormat</value>
+					</array>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 以下 validator ConversionService 在使用 mvc:annotation-driven 会 自动注册 -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+	
+	<!-- 国际化的消息资源文件（本系统中主要用于显示/错误消息定制） -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames" value="classpath:properties/validator/validator" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="60" />
+	</bean>
+	
+	<!-- 权限拦截器 -->
+	<mvc:interceptors>
+		<!-- 客户端安全访问拦截器 拦截所有请求-->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="org.system.intercept.platform.BaseSecurityInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>
